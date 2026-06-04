@@ -13,12 +13,12 @@ export const bookTypeDefs = /* GraphQL */ `
     publishedYear: Int
   }
 
-  type Query {
+  extend type Query {
     books: [Book!]!
     book(id: ID!): Book
   }
 
-   type Mutation {
+  extend type Mutation {
     addBook(input: CreateBookInput!): Book!
   }
 `;

@@ -13,7 +13,7 @@ export const authorResolvers = {
   Query: {
     authors(
       _parent: unknown,
-      _args: any,
+      _args: Record<string, never>,
       { datasource }: GraphQLContext,
     ): Promise<Author[]> {
       return datasource.authorService.findAll();
