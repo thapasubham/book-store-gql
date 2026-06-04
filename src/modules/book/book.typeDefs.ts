@@ -2,13 +2,14 @@ export const bookTypeDefs = /* GraphQL */ `
   type Book {
     id: ID!
     title: String!
-    author: String!
+    authorId: ID!
+    author: Author!
     publishedYear: Int
   }
 
   input CreateBookInput {
     title: String!
-    author: String!
+    authorId: ID!
     publishedYear: Int
   }
 
@@ -17,7 +18,7 @@ export const bookTypeDefs = /* GraphQL */ `
     book(id: ID!): Book
   }
 
-  type Mutation {
+   type Mutation {
     addBook(input: CreateBookInput!): Book!
   }
 `;

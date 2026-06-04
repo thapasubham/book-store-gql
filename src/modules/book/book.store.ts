@@ -1,6 +1,7 @@
 import { DEFAULT_SEED_BOOKS } from "../../seed/book.seed.js";
 import type { Book, CreateBookInput } from "./book.types.js";
 
+
 export class BookStore {
   private readonly books: Book[];
   private nextId: number;
@@ -22,7 +23,7 @@ export class BookStore {
     const book: Book = {
       id: String(this.nextId++),
       title: input.title,
-      author: input.author,
+      authorId: input.authorId,
       ...(input.publishedYear !== undefined
         ? { publishedYear: input.publishedYear }
         : {}),

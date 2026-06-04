@@ -2,7 +2,9 @@ import type { BookStore } from "./book.store.js";
 import type { Book, CreateBookInput } from "./book.types.js";
 
 export class BookService {
-  constructor(private readonly store: BookStore) {}
+  constructor(
+    private readonly store: BookStore,
+  ) {}
 
   findAll(): Promise<Book[]> {
     return this.store.findAll();
