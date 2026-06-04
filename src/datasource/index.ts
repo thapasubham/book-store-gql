@@ -1,7 +1,10 @@
+import { BookService } from "../modules/book/book.service.js";
 import { BookStore } from "../modules/book/book.store.js";
 
-export const bookStore = new BookStore();
+const bookStore = new BookStore();
+
+export const bookService = new BookService(bookStore);
 
 export const datasource = {
-  bookStore,
+  bookService,
 } as const;

@@ -10,15 +10,15 @@ export class BookStore {
     this.nextId = this.books.length + 1;
   }
 
-  findAll(): Book[] {
+  async findAll(): Promise<Book[]> {
     return [...this.books];
   }
 
-  findById(id: string): Book | undefined {
+  async findById(id: string): Promise<Book | undefined> {
     return this.books.find((book) => book.id === id);
   }
 
-  create(input: CreateBookInput): Book {
+  async create(input: CreateBookInput): Promise<Book> {
     const book: Book = {
       id: String(this.nextId++),
       title: input.title,

@@ -13,18 +13,18 @@ export const bookResolvers = {
   Query: {
     books(
       _parent: unknown,
-      _args: any,
+      _args: Record<string, never>,
       { datasource }: GraphQLContext,
-    ): Book[] {
-      return datasource.bookStore.findAll();
+    ): Promise<Book[]> {
+      return datasource.bookService.findAll();
     },
 
     book(
       _parent: unknown,
       { id }: BookQueryArgs,
       { datasource }: GraphQLContext,
-    ): Book | null {
-      return datasource.bookStore.findById(id) ?? null;
+    ): Promise<Book | null> {
+      return datasource.bookService.findById(id).then((book) => book ?? null);
     },
   },
 
@@ -33,8 +33,8 @@ export const bookResolvers = {
       _parent: unknown,
       { input }: AddBookArgs,
       { datasource }: GraphQLContext,
-    ): Book {
-      return datasource.bookStore.create(input);
+    ): Promise<Book> {
+      return datasource.bookService.create(input);
     },
   },
 };
