@@ -13,5 +13,5 @@ export const resolvers = {
     ...authorResolvers.Mutation,
     ...bookResolvers.Mutation,
   },
-
+  Book: bookResolvers.Book,
 };

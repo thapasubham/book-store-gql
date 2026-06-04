@@ -24,7 +24,9 @@ export const authorResolvers = {
       { id }: AuthorQueryArgs,
       { datasource }: GraphQLContext,
     ): Promise<Author | null> {
-      return datasource.authorService.findById(id).then((author) => author ?? null);
+      return datasource.authorService
+        .findById(id)
+        .then((author) => author ?? null);
     },
   },
 
@@ -37,5 +39,13 @@ export const authorResolvers = {
       return datasource.authorService.create(input);
     },
   },
-
+  Author: {
+    books(
+      parent: Author,
+      _args: Record<string, never>,
+      { datasource }: GraphQLContext,
+    ) {
+      return datasource.bookService.findByAuthorId(parent.id);
+    },
+  },
 };

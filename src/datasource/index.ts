@@ -7,7 +7,7 @@ const authorStore = new AuthorStore();
 const bookStore = new BookStore();
 
 export const authorService = new AuthorService(authorStore);
-export const bookService = new BookService(bookStore);
+export const bookService = new BookService(bookStore, authorStore);
 
 export const datasource = {
   authorService,

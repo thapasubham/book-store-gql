@@ -14,7 +14,11 @@ export class BookStore {
   async findAll(): Promise<Book[]> {
     return [...this.books];
   }
-
+  findByAuthorId(authorId: string): Promise<Book[]> {
+    return Promise.resolve(
+      this.books.filter((book) => book.authorId === authorId),
+    );
+  }
   async findById(id: string): Promise<Book | undefined> {
     return this.books.find((book) => book.id === id);
   }
