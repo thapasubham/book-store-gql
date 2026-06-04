@@ -3,12 +3,14 @@ import { expressMiddleware } from "@as-integrations/express5";
 import cors from "cors";
 import express from "express";
 import { env } from "./config/env.js";
+import { datasource } from "./datasource/index.js";
 import { resolvers, typeDefs } from "./schema/index.js";
+import type { GraphQLContext } from "./types/context.js";
 
 async function main(): Promise<void> {
   const app = express();
 
-  const server = new ApolloServer({
+  const server = new ApolloServer<GraphQLContext>({
     typeDefs,
     resolvers,
   });
@@ -23,7 +25,9 @@ async function main(): Promise<void> {
     "/graphql",
     cors<cors.CorsRequest>(),
     express.json(),
-    expressMiddleware(server),
+    expressMiddleware(server, {
+      context: async (): Promise<GraphQLContext> => ({ datasource }),
+    }),
   );
 
   app.listen(env.port, () => {

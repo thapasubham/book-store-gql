@@ -1,4 +1,4 @@
-import { bookStore } from "./book.store.js";
+import type { GraphQLContext } from "../../types/context.js";
 import type { Book, CreateBookInput } from "./book.types.js";
 
 interface BookQueryArgs {
@@ -11,18 +11,30 @@ interface AddBookArgs {
 
 export const bookResolvers = {
   Query: {
-    books(): Book[] {
-      return bookStore.findAll();
+    books(
+      _parent: unknown,
+      _args: any,
+      { datasource }: GraphQLContext,
+    ): Book[] {
+      return datasource.bookStore.findAll();
     },
 
-    book(_parent: unknown, { id }: BookQueryArgs): Book | null {
-      return bookStore.findById(id) ?? null;
+    book(
+      _parent: unknown,
+      { id }: BookQueryArgs,
+      { datasource }: GraphQLContext,
+    ): Book | null {
+      return datasource.bookStore.findById(id) ?? null;
     },
   },
 
   Mutation: {
-    addBook(_parent: unknown, { input }: AddBookArgs): Book {
-      return bookStore.create(input);
+    addBook(
+      _parent: unknown,
+      { input }: AddBookArgs,
+      { datasource }: GraphQLContext,
+    ): Book {
+      return datasource.bookStore.create(input);
     },
   },
 };
