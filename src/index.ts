@@ -5,6 +5,7 @@ import cors from "cors";
 import express from "express";
 import { env } from "./config/env.js";
 import { datasource } from "./datasource/index.js";
+import { authRouter } from "./modules/auth/index.js";
 import { resolvers, typeDefs } from "./schema/index.js";
 import type { GraphQLContext } from "./types/context.js";
 
@@ -22,10 +23,12 @@ async function main(): Promise<void> {
     res.json({ status: "ok" });
   });
 
+  app.use(express.json());
+  app.use("/auth", authRouter);
+
   app.use(
     "/graphql",
     cors<cors.CorsRequest>(),
-    express.json(),
     expressMiddleware(server, {
       context: async (): Promise<GraphQLContext> => ({ datasource }),
     }),
@@ -33,6 +36,7 @@ async function main(): Promise<void> {
 
   app.listen(env.port, () => {
     console.log(`GraphQL ready at http://localhost:${env.port}/graphql`);
+    console.log(`Auth API at http://localhost:${env.port}/auth`);
     console.log(`Health check at http://localhost:${env.port}/health`);
   });
 }
