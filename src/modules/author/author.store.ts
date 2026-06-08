@@ -1,31 +1,29 @@
-import { DEFAULT_SEED_AUTHORS } from "../../seed/author.seed.js";
+import type { PrismaClient } from "../../generated/prisma/client.js";
+import { toAuthor } from "../../lib/mappers.js";
 import type { Author, CreateAuthorInput } from "./author.types.js";
 
 export class AuthorStore {
-  private readonly authors: Author[];
-  private nextId: number;
+  constructor(private readonly prisma: PrismaClient) {}
 
-  constructor(seedAuthors: Author[] = DEFAULT_SEED_AUTHORS) {
-    this.authors = [...seedAuthors];
-    this.nextId = this.authors.length + 1;
+  async findAll(): Promise<Author[]> {
+    const authors = await this.prisma.author.findMany({
+      orderBy: { name: "asc" },
+    });
+    return authors.map(toAuthor);
   }
 
-  findAll(): Promise<Author[]> {
-    return Promise.resolve([...this.authors]);
+  async findById(id: string): Promise<Author | undefined> {
+    const author = await this.prisma.author.findUnique({ where: { id } });
+    return author ? toAuthor(author) : undefined;
   }
 
-  findById(id: string): Promise<Author | undefined> {
-    return Promise.resolve(this.authors.find((author) => author.id === id));
-  }
-
-  create(input: CreateAuthorInput): Promise<Author> {
-    const author: Author = {
-      id: String(this.nextId++),
-      name: input.name,
-      ...(input.bio !== undefined ? { bio: input.bio } : {}),
-    };
-
-    this.authors.push(author);
-    return Promise.resolve(author);
+  async create(input: CreateAuthorInput): Promise<Author> {
+    const author = await this.prisma.author.create({
+      data: {
+        name: input.name,
+        bio: input.bio ?? null,
+      },
+    });
+    return toAuthor(author);
   }
 }

@@ -1,39 +1,38 @@
-import { DEFAULT_SEED_BOOKS } from "../../seed/book.seed.js";
+import type { PrismaClient } from "../../generated/prisma/client.js";
+import { toBook } from "../../lib/mappers.js";
 import type { Book, CreateBookInput } from "./book.types.js";
 
-
 export class BookStore {
-  private readonly books: Book[];
-  private nextId: number;
-
-  constructor(seedBooks: Book[] = DEFAULT_SEED_BOOKS) {
-    this.books = [...seedBooks];
-    this.nextId = this.books.length + 1;
-  }
+  constructor(private readonly prisma: PrismaClient) {}
 
   async findAll(): Promise<Book[]> {
-    return [...this.books];
+    const books = await this.prisma.book.findMany({
+      orderBy: { title: "asc" },
+    });
+    return books.map(toBook);
   }
-  findByAuthorId(authorId: string): Promise<Book[]> {
-    return Promise.resolve(
-      this.books.filter((book) => book.authorId === authorId),
-    );
-  }
+
   async findById(id: string): Promise<Book | undefined> {
-    return this.books.find((book) => book.id === id);
+    const book = await this.prisma.book.findUnique({ where: { id } });
+    return book ? toBook(book) : undefined;
+  }
+
+  async findByAuthorId(authorId: string): Promise<Book[]> {
+    const books = await this.prisma.book.findMany({
+      where: { authorId },
+      orderBy: { title: "asc" },
+    });
+    return books.map(toBook);
   }
 
   async create(input: CreateBookInput): Promise<Book> {
-    const book: Book = {
-      id: String(this.nextId++),
-      title: input.title,
-      authorId: input.authorId,
-      ...(input.publishedYear !== undefined
-        ? { publishedYear: input.publishedYear }
-        : {}),
-    };
-
-    this.books.push(book);
-    return book;
+    const book = await this.prisma.book.create({
+      data: {
+        title: input.title,
+        authorId: input.authorId,
+        publishedYear: input.publishedYear ?? null,
+      },
+    });
+    return toBook(book);
   }
 }
