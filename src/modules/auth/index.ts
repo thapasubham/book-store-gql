@@ -5,7 +5,7 @@ import { createAuthRouter } from "./auth.routes.js";
 import { AuthService } from "./auth.service.js";
 
 const authRepository = new AuthRepository(prisma);
-const authService = new AuthService(authRepository);
+export const authService = new AuthService(authRepository);
 const authController = new AuthController(authService);
 
 export const authRouter = createAuthRouter(authController, authService);

@@ -1,7 +1,17 @@
 import type { NextFunction, Request, Response } from "express";
 import type { AuthService } from "../modules/auth/auth.service.js";
 
-export function createAuthMiddleware(authService: AuthService) {
+export interface AuthMiddlewareOptions {
+  /** When false, requests without a token continue as anonymous. Default: true. */
+  required?: boolean;
+}
+
+export function createAuthMiddleware(
+  authService: AuthService,
+  options: AuthMiddlewareOptions = {},
+) {
+  const required = options.required ?? true;
+
   return async (
     req: Request,
     res: Response,
@@ -9,7 +19,11 @@ export function createAuthMiddleware(authService: AuthService) {
   ): Promise<void> => {
     const header = req.headers.authorization;
     if (!header?.startsWith("Bearer ")) {
-      res.status(401).json({ error: "Unauthorized" });
+      if (required) {
+        res.status(401).json({ error: "Unauthorized" });
+        return;
+      }
+      next();
       return;
     }
 

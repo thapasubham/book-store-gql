@@ -1,4 +1,5 @@
 import type { GraphQLContext } from "../../types/context.js";
+import { requireAuth } from "../../lib/require-auth.js";
 import type { Author, CreateAuthorInput } from "./author.types.js";
 
 interface AuthorQueryArgs {
@@ -34,8 +35,9 @@ export const authorResolvers = {
     addAuthor(
       _parent: unknown,
       { input }: AddAuthorArgs,
-      { datasource }: GraphQLContext,
+      { datasource, user }: GraphQLContext,
     ): Promise<Author> {
+      requireAuth(user);
       return datasource.authorService.create(input);
     },
   },

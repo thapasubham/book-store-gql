@@ -1,4 +1,5 @@
 import type { GraphQLContext } from "../../types/context.js";
+import { requireAuth } from "../../lib/require-auth.js";
 import type { Book, CreateBookInput } from "./book.types.js";
 
 interface BookQueryArgs {
@@ -33,8 +34,9 @@ export const bookResolvers = {
     addBook(
       _parent: unknown,
       { input }: AddBookArgs,
-      { datasource }: GraphQLContext,
+      { datasource, user }: GraphQLContext,
     ): Promise<Book> {
+      requireAuth(user);
       return datasource.bookService.create(input);
     },
   },
