@@ -31,7 +31,7 @@ async function main(): Promise<void> {
   app.use(
     "/graphql",
     cors<cors.CorsRequest>(),
-    createAuthMiddleware(authService, { required: true }),
+    createAuthMiddleware(authService, { required: false }),
     expressMiddleware(server, {
       context,
     }),

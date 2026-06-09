@@ -3,7 +3,12 @@ export const authorTypeDefs = /* GraphQL */ `
     id: ID!
     name: String!
     bio: String
-    books: [Book!]!
+    books(pagination: PaginationInput): BookConnection!
+  }
+
+  type AuthorConnection {
+    nodes: [Author!]!
+    pageInfo: PageInfo!
   }
 
   input CreateAuthorInput {
@@ -12,7 +17,7 @@ export const authorTypeDefs = /* GraphQL */ `
   }
 
   extend type Query {
-    authors: [Author!]!
+    authors(pagination: PaginationInput): AuthorConnection!
     author(id: ID!): Author
   }
 

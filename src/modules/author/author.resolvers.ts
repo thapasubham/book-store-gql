@@ -1,9 +1,18 @@
 import type { GraphQLContext } from "../../types/context.js";
 import { requireAuth } from "../../lib/require-auth.js";
+import type { PaginationInput } from "../../lib/pagination.js";
 import type { Author, CreateAuthorInput } from "./author.types.js";
 
 interface AuthorQueryArgs {
   id: string;
+}
+
+interface AuthorsQueryArgs {
+  pagination?: PaginationInput | null;
+}
+
+interface AuthorBooksArgs {
+  pagination?: PaginationInput | null;
 }
 
 interface AddAuthorArgs {
@@ -14,20 +23,19 @@ export const authorResolvers = {
   Query: {
     authors(
       _parent: unknown,
-      _args: Record<string, never>,
+      { pagination }: AuthorsQueryArgs,
       { datasource }: GraphQLContext,
-    ): Promise<Author[]> {
-      return datasource.authorService.findAll();
+    ) {
+      return datasource.authorService.findAll(pagination);
     },
 
-    author(
+    async author(
       _parent: unknown,
       { id }: AuthorQueryArgs,
       { datasource }: GraphQLContext,
     ): Promise<Author | null> {
-      return datasource.authorService
-        .findById(id)
-        .then((author) => author ?? null);
+      const author = await datasource.authorService.findById(id);
+      return author ?? null;
     },
   },
 
@@ -44,10 +52,10 @@ export const authorResolvers = {
   Author: {
     books(
       parent: Author,
-      _args: Record<string, never>,
+      { pagination }: AuthorBooksArgs,
       { datasource }: GraphQLContext,
     ) {
-      return datasource.bookService.findByAuthorId(parent.id);
+      return datasource.bookService.findByAuthorId(parent.id, pagination);
     },
   },
 };

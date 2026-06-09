@@ -1,12 +1,22 @@
 import { GraphQLError } from "graphql";
+import type {
+  PaginatedResult,
+  PaginationInput,
+} from "../../lib/pagination.js";
+import { normalizePagination, toPaginatedResult } from "../../lib/pagination.js";
 import type { AuthorStore } from "./author.store.js";
 import type { Author, CreateAuthorInput } from "./author.types.js";
 
 export class AuthorService {
   constructor(private readonly store: AuthorStore) {}
 
-  findAll(): Promise<Author[]> {
-    return this.store.findAll();
+  async findAll(
+    paginationInput?: PaginationInput | null,
+  ): Promise<PaginatedResult<Author>> {
+    const pagination = normalizePagination(paginationInput);
+    const { nodes, totalCount } =
+      await this.store.findManyPaginated(pagination);
+    return toPaginatedResult(nodes, totalCount, pagination);
   }
 
   findById(id: string): Promise<Author | undefined> {

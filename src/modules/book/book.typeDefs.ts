@@ -7,6 +7,11 @@ export const bookTypeDefs = /* GraphQL */ `
     publishedYear: Int
   }
 
+  type BookConnection {
+    nodes: [Book!]!
+    pageInfo: PageInfo!
+  }
+
   input CreateBookInput {
     title: String!
     authorId: ID!
@@ -14,7 +19,7 @@ export const bookTypeDefs = /* GraphQL */ `
   }
 
   extend type Query {
-    books: [Book!]!
+    books(pagination: PaginationInput): BookConnection!
     book(id: ID!): Book
   }
 

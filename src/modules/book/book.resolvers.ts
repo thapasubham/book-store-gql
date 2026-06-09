@@ -1,9 +1,14 @@
 import type { GraphQLContext } from "../../types/context.js";
 import { requireAuth } from "../../lib/require-auth.js";
+import type { PaginationInput } from "../../lib/pagination.js";
 import type { Book, CreateBookInput } from "./book.types.js";
 
 interface BookQueryArgs {
   id: string;
+}
+
+interface BooksQueryArgs {
+  pagination?: PaginationInput | null;
 }
 
 interface AddBookArgs {
@@ -14,10 +19,10 @@ export const bookResolvers = {
   Query: {
     books(
       _parent: unknown,
-      _args: Record<string, never>,
+      { pagination }: BooksQueryArgs,
       { datasource }: GraphQLContext,
-    ): Promise<Book[]> {
-      return datasource.bookService.findAll();
+    ) {
+      return datasource.bookService.findAll(pagination);
     },
 
     async book(
