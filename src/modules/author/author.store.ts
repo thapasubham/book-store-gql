@@ -30,6 +30,18 @@ export class AuthorStore {
     return author ? toAuthor(author) : undefined;
   }
 
+  async findByIds(ids: string[]): Promise<(Author | undefined)[]> {
+    if (ids.length === 0) {
+      return [];
+    }
+
+    const authors = await this.prisma.author.findMany({
+      where: { id: { in: ids } },
+    });
+    const byId = new Map(authors.map((author) => [author.id, toAuthor(author)]));
+    return ids.map((id) => byId.get(id));
+  }
+
   async create(input: CreateAuthorInput): Promise<Author> {
     const author = await this.prisma.author.create({
       data: {

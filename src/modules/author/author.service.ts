@@ -1,9 +1,9 @@
 import { GraphQLError } from "graphql";
-import type {
-  PaginatedResult,
-  PaginationInput,
+import type { PaginatedResult, PaginationInput } from "../../lib/pagination.js";
+import {
+  normalizePagination,
+  toPaginatedResult,
 } from "../../lib/pagination.js";
-import { normalizePagination, toPaginatedResult } from "../../lib/pagination.js";
 import type { AuthorStore } from "./author.store.js";
 import type { Author, CreateAuthorInput } from "./author.types.js";
 
@@ -23,7 +23,14 @@ export class AuthorService {
     return this.store.findById(id);
   }
 
+  findByIds(ids: string[]): Promise<(Author | undefined)[]> {
+    console.log("Batched Thing:", ids);
+    return this.store.findByIds(ids);
+  }
+
   findByIdOrThrow(id: string): Promise<Author> {
+    console.log("Batched Thing:", id);
+
     return this.findById(id).then((author) => {
       if (!author) {
         throw new GraphQLError(`Author with id "${id}" not found`, {

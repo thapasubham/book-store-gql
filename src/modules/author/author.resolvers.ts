@@ -2,6 +2,8 @@ import type { GraphQLContext } from "../../types/context.js";
 import { requireAuth } from "../../lib/require-auth.js";
 import type { PaginationInput } from "../../lib/pagination.js";
 import type { Author, CreateAuthorInput } from "./author.types.js";
+import { authResolvers } from "../auth/auth.resolvers.js";
+import { id } from "zod/v4/locales";
 
 interface AuthorQueryArgs {
   id: string;
@@ -55,6 +57,7 @@ export const authorResolvers = {
       { pagination }: AuthorBooksArgs,
       { datasource }: GraphQLContext,
     ) {
+      console.log("Calling item with: ", parent.id);
       return datasource.bookService.findByAuthorId(parent.id, pagination);
     },
   },

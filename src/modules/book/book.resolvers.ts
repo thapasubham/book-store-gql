@@ -1,6 +1,8 @@
+import { GraphQLError } from "graphql";
 import type { GraphQLContext } from "../../types/context.js";
 import { requireAuth } from "../../lib/require-auth.js";
 import type { PaginationInput } from "../../lib/pagination.js";
+import type { Author } from "../author/author.types.js";
 import type { Book, CreateBookInput } from "./book.types.js";
 
 interface BookQueryArgs {
@@ -46,12 +48,23 @@ export const bookResolvers = {
     },
   },
   Book: {
-    author(
+    async author(
       parent: Book,
       _args: Record<string, never>,
-      { datasource }: GraphQLContext,
-    ) {
-      return datasource.authorService.findByIdOrThrow(parent.authorId);
+      { loaders }: GraphQLContext,
+    ): Promise<Author> {
+      const author = await loaders.authorById.load(parent.authorId);
+      console.log("Calling item with: ", parent.id);
+
+      if (!author) {
+        throw new GraphQLError(
+          `Author with id "${parent.authorId}" not found`,
+          {
+            extensions: { code: "NOT_FOUND" },
+          },
+        );
+      }
+      return author;
     },
   },
 };
