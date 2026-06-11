@@ -28,17 +28,16 @@ export class AuthorService {
     return this.store.findByIds(ids);
   }
 
-  findByIdOrThrow(id: string): Promise<Author> {
+  async findByIdOrThrow(id: string): Promise<Author> {
     console.log("Batched Thing:", id);
 
-    return this.findById(id).then((author) => {
-      if (!author) {
-        throw new GraphQLError(`Author with id "${id}" not found`, {
-          extensions: { code: "NOT_FOUND" },
-        });
-      }
-      return author;
-    });
+    const author = await this.findById(id);
+    if (!author) {
+      throw new GraphQLError(`Author with id "${id}" not found`, {
+        extensions: { code: "NOT_FOUND" },
+      });
+    }
+    return author;
   }
 
   create(input: CreateAuthorInput): Promise<Author> {
