@@ -6,7 +6,7 @@ import express from "express";
 import { env } from "./config/env.js";
 import { datasource } from "./datasource/index.js";
 import { authRouter, authService } from "./modules/auth/index.js";
-import { resolvers, typeDefs } from "./schema/index.js";
+import { formatError, resolvers, typeDefs } from "./schema/index.js";
 import type { GraphQLContext } from "./types/context.js";
 import { context } from "./context/context.js";
 import { createAuthMiddleware } from "./middleware/auth.middleware.js";
@@ -17,6 +17,7 @@ async function main(): Promise<void> {
   const server = new ApolloServer<GraphQLContext>({
     typeDefs,
     resolvers,
+    formatError,
   });
 
   await server.start();

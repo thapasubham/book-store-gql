@@ -1,3 +1,4 @@
+import { formattedError } from "../lib/formattedError.js";
 import { authResolvers } from "../modules/auth/auth.resolvers.js";
 import { authTypeDefs } from "../modules/auth/auth.typeDefs.js";
 import { authorResolvers, authorTypeDefs } from "../modules/author/index.js";
@@ -26,3 +27,5 @@ export const resolvers = {
   Author: authorResolvers.Author,
   Book: bookResolvers.Book,
 };
+
+export const formatError = formattedError;
