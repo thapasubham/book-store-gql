@@ -54,7 +54,6 @@ export const bookResolvers = {
       { loaders }: GraphQLContext,
     ): Promise<Author> {
       const author = await loaders.authorById.load(parent.authorId);
-      console.log("Calling item with: ", parent.id);
 
       if (!author) {
         throw new GraphQLError(

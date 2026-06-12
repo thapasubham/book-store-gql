@@ -57,7 +57,6 @@ export const authorResolvers = {
       { pagination }: AuthorBooksArgs,
       { datasource }: GraphQLContext,
     ) {
-      console.log("Calling item with: ", parent.id);
       return datasource.bookService.findByAuthorId(parent.id, pagination);
     },
   },

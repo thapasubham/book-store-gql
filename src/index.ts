@@ -10,7 +10,7 @@ import { formatError, resolvers, typeDefs } from "./schema/index.js";
 import type { GraphQLContext } from "./types/context.js";
 import { context } from "./context/context.js";
 import { createAuthMiddleware } from "./middleware/auth.middleware.js";
-import { logger } from "./lib/logging.js";
+import { httpLoggerOptions, logger } from "./lib/logging.js";
 import { pinoHttp } from "pino-http";
 
 async function main(): Promise<void> {
@@ -23,7 +23,7 @@ async function main(): Promise<void> {
   });
 
   await server.start();
-  app.use(pinoHttp({ logger }));
+  app.use(pinoHttp(httpLoggerOptions));
 
   app.get("/health", (_req, res) => {
     res.json({ status: "ok" });

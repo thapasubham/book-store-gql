@@ -24,13 +24,10 @@ export class AuthorService {
   }
 
   findByIds(ids: string[]): Promise<(Author | undefined)[]> {
-    console.log("Batched Thing:", ids);
     return this.store.findByIds(ids);
   }
 
   async findByIdOrThrow(id: string): Promise<Author> {
-    console.log("Batched Thing:", id);
-
     const author = await this.findById(id);
     if (!author) {
       throw new GraphQLError(`Author with id "${id}" not found`, {

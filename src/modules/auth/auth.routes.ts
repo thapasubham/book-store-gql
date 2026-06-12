@@ -11,10 +11,7 @@ export function createAuthRouter(
 ): Router {
   const router = Router();
   const authenticate = createAuthMiddleware(authService, { required: false });
-  router.get("/", authenticate, (req, res) => {
-    console.log("Got request");
-    res.send("Hello");
-  });
+
   router.post("/register", validate(registerSchema), controller.register);
   router.post("/login", validate(loginSchema), controller.login);
   router.get("/me", authenticate, controller.me);
