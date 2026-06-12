@@ -10,6 +10,8 @@ import { formatError, resolvers, typeDefs } from "./schema/index.js";
 import type { GraphQLContext } from "./types/context.js";
 import { context } from "./context/context.js";
 import { createAuthMiddleware } from "./middleware/auth.middleware.js";
+import { logger } from "./lib/logging.js";
+import { pinoHttp } from "pino-http";
 
 async function main(): Promise<void> {
   const app = express();
@@ -21,6 +23,7 @@ async function main(): Promise<void> {
   });
 
   await server.start();
+  app.use(pinoHttp({ logger }));
 
   app.get("/health", (_req, res) => {
     res.json({ status: "ok" });
@@ -39,13 +42,19 @@ async function main(): Promise<void> {
   );
 
   app.listen(env.port, () => {
-    console.log(`GraphQL ready at http://localhost:${env.port}/graphql`);
-    console.log(`Auth API at http://localhost:${env.port}/auth`);
-    console.log(`Health check at http://localhost:${env.port}/health`);
+    logger.info(
+      {
+        port: env.port,
+        graphql: `http://localhost:${env.port}/graphql`,
+        auth: `http://localhost:${env.port}/auth`,
+        health: `http://localhost:${env.port}/health`,
+      },
+      "Server started",
+    );
   });
 }
 
 main().catch((error: unknown) => {
-  console.error("Failed to start server:", error);
+  logger.error(error, "Failed to start server");
   process.exit(1);
 });
